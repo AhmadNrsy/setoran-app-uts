@@ -3,27 +3,46 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (
-        email === "muhammad.fikri@uin-suska.ac.id" &&
-        password === "muhammad.fikri"
-      ) {
-        localStorage.setItem("token", "token-sakti-uts-123");
+    try {
+
+      const params = new URLSearchParams();
+      params.append("client_id", import.meta.env.VITE_CLIENT_ID);
+      params.append("client_secret", import.meta.env.VITE_CLIENT_SECRET);
+      params.append("grant_type", "password");
+      params.append("username", username);
+      params.append("password", password);
+      params.append("scope", "openid profile email");
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_KC_URL}/realms/dev/protocol/openid-connect/token`,
+        params,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      // 🔐 SIMPAN TOKEN ASLI!
+      if (res.data.access_token) {
+        localStorage.setItem("token", res.data.access_token);
+
         Swal.fire({
           icon: "success",
           title: "Login Berhasil",
-          text: "Selamat datang kembali, Muhammad Fikry, S.T., M.Sc.",
+          text: "Autentikasi SSO sukses!",
           confirmButtonColor: "#2DD4A0",
           background: "#FFFFFF",
           color: "#0D2B22",
@@ -32,23 +51,24 @@ export default function Login() {
         }).then(() => {
           navigate("/dashboard");
         });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Autentikasi Gagal",
-          text: "Kredensial SSO tidak valid atau tidak terdaftar di sistem.",
-          confirmButtonColor: "#E53E3E",
-          background: "#FFFFFF",
-          color: "#0D2B22",
-        });
-        setIsLoading(false);
       }
-    }, 1200); // Delay dikit 1.2 detik
+    } catch (err) {
+      console.error("Login Error:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Autentikasi Gagal",
+        text: "Kredensial SSO tidak valid atau tidak terdaftar di sistem.",
+        confirmButtonColor: "#E53E3E",
+        background: "#FFFFFF",
+        color: "#0D2B22",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-sans">
-      {/* Ornamen Background Estetik */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-accent/20 rounded-full blur-[100px]"></div>
 
@@ -58,7 +78,6 @@ export default function Login() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md bg-white rounded-[2rem] shadow-2xl border border-slate-100 p-10 relative z-10"
       >
-        {/* Logo & Branding */}
         <div className="flex flex-col items-center justify-center mb-10">
           <div className="w-16 h-16 bg-primary text-accent rounded-2xl flex items-center justify-center shadow-inner border border-primary/50 mb-4">
             <svg
@@ -83,17 +102,17 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Form Login */}
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="space-y-1.5">
+            {/* Ubah label jadi Username karena Keycloak pakenya username */}
             <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">
-              Email / NIP
+              Username / NIP
             </label>
             <input
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Masukkan email kampus dosen..."
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Masukkan username SSO"
               className="w-full bg-slate-50 border border-slate-200 text-secondary text-sm font-bold px-5 py-3.5 rounded-xl focus:ring-2 focus:ring-accent outline-none transition-all placeholder:text-muted/60"
               required
             />
@@ -118,33 +137,7 @@ export default function Login() {
             disabled={isLoading}
             className="w-full bg-primary hover:bg-forest-600 text-surface font-black px-5 py-4 rounded-xl uppercase text-xs tracking-widest transition-all shadow-soft mt-4 disabled:opacity-70 flex items-center justify-center gap-2"
           >
-            {isLoading ? (
-              <>
-                <svg
-                  className="animate-spin h-4 w-4 text-surface"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                <span>Authenticating...</span>
-              </>
-            ) : (
-              "Sign In"
-            )}
+            {isLoading ? "Authenticating..." : "Sign In"}
           </button>
         </form>
 

@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api-kampus/(.*)",
+      "destination": "https://api.tif.uin-suska.ac.id/setoran-dev/v1/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -128,7 +128,7 @@ export default function MahasiswaDetail() {
         icon: "success",
         title: "Revoked!",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       });
       fetchData();
     } catch (err) {
