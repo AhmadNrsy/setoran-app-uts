@@ -1,7 +1,6 @@
 // src/pages/Setoran.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// 🔥 Import motion & AnimatePresence buat handling transisi ganti state
 import { motion, AnimatePresence } from "framer-motion";
 import { getPaSaya } from "../services/setoranService";
 
@@ -18,7 +17,7 @@ function getInitials(name = "") {
 }
 
 // ==========================================
-// 🦴 SKELETON LOADER (PERCEIVED PERFORMANCE)
+// 🦴 SKELETON LOADER
 // ==========================================
 const SkeletonCard = () => {
   return (
@@ -39,26 +38,16 @@ const SkeletonCard = () => {
 };
 
 // ==========================================
-// 📌 MOTION VARIANTS (Premium Transition)
+// 📌 MOTION VARIANTS
 // ==========================================
-// Variants buat container utama (nge-handling stagger children)
 const stageVariants = {
   hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,
     y: 0,
-    transition: {
-      staggerChildren: 0.1,
-      duration: 0.4,
-      ease: "easeOut",
-    },
+    transition: { staggerChildren: 0.1, duration: 0.4, ease: "easeOut" },
   },
-  exit: {
-
-    opacity: 0,
-    y: -10,
-    transition: { duration: 0.2, ease: "easeIn" },
-  },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2, ease: "easeIn" } },
 };
 
 const groupVariants = {
@@ -73,9 +62,6 @@ export default function Setoran() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ==========================================
-  // 📌 FETCH DATA API DENGAN ARTIFICIAL DELAY
-  // ==========================================
   useEffect(() => {
     const fetchMahasiswa = async () => {
       try {
@@ -89,7 +75,6 @@ export default function Setoran() {
       } catch (err) {
         console.error("ERROR FETCH MAHASISWA:", err);
       } finally {
-        // Skeleton delay.
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -98,9 +83,6 @@ export default function Setoran() {
     fetchMahasiswa();
   }, []);
 
-  // ==========================================
-  // 📌 FILTER & GROUPING LOGIC (AMAN KAGA DISENTUH)
-  // ==========================================
   const filteredMahasiswa = mahasiswa.filter((mhs) => {
     const keyword = searchQuery.toLowerCase();
     return (
@@ -120,7 +102,6 @@ export default function Setoran() {
   const sortedAngkatanKeys = Object.keys(groupedMahasiswa).sort().reverse();
 
   return (
-    // Utama tetep pake Tailwind animation biar header muncul cepet
     <div className="p-8 space-y-10 animate-fade-in-up">
       {/* 🧭 HEADER & SEARCH */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 bg-surface p-6 rounded-2xl border border-soft shadow-card relative z-10">
@@ -159,16 +140,14 @@ export default function Setoran() {
 
       {/* 📇 CONTENT AREA WITH MOTION */}
       <div>
-        {/* 🔥 AnimatePresence mode="wait" bikin skeleton ngilang dulu, baru konten muncul */}
         <AnimatePresence mode="wait">
           {loading ? (
-            // 🦴 RENDER SKELETON Block (motion.div)
             <motion.div
-              key="skeleton-stage" // Unique key buat AnimatePresence tracker
+              key="skeleton-stage"
               variants={stageVariants}
               initial="hidden"
               animate="show"
-              exit="exit" // Efek ngilang pelan ke atas
+              exit="exit"
               className="space-y-6"
             >
               <div className="flex items-center gap-4">
@@ -182,7 +161,6 @@ export default function Setoran() {
               </div>
             </motion.div>
           ) : sortedAngkatanKeys.length === 0 ? (
-            // 🛑 KONDISI KOSONG (motion.div)
             <motion.div
               key="empty-stage"
               variants={stageVariants}
@@ -200,10 +178,9 @@ export default function Setoran() {
               </p>
             </motion.div>
           ) : (
-            // ✅ RENDER DATA BERDASARKAN GRUP ANGKATAN (motion.div)
             <motion.div
               key="content-stage"
-              variants={stageVariants} // Stagger Children (grup muncul bergantian)
+              variants={stageVariants}
               initial="hidden"
               animate="show"
               exit="exit"
@@ -215,7 +192,6 @@ export default function Setoran() {
                   variants={groupVariants}
                   className="space-y-5"
                 >
-                  {/* 🏷️ Group Header */}
                   <div className="flex items-center gap-4">
                     <h2 className="text-xl font-black text-secondary tracking-tight">
                       {angkatan}
@@ -226,22 +202,39 @@ export default function Setoran() {
                     </span>
                   </div>
 
-                  {/* 📇 Grid Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {groupedMahasiswa[angkatan].map((mhs) => {
                       const totalSetor =
                         mhs.info_setoran?.total_sudah_setor ?? 0;
-                      const progressStatus =
-                        totalSetor > 0 ? "AKTIF" : "STAGNAN";
+
+                      // 🔥 LOGIC KHATAM: Auto deteksi kalau udah nyentuh 23 surah
+                      let progressStatus = "STAGNAN";
+                      if (totalSetor >= 23) {
+                        progressStatus = "KHATAM";
+                      } else if (totalSetor > 0) {
+                        progressStatus = "AKTIF";
+                      }
 
                       return (
                         <div
                           key={mhs.nim}
                           onClick={() => navigate(`/setoran/${mhs.nim}`)}
-                          className="group bg-surface p-6 border border-soft rounded-2xl shadow-card hover:shadow-card-hover cursor-pointer transition-all hover:-translate-y-1 flex flex-col h-full"
+                          // 🔥 STYLE KHATAM: Bikin border dan background kartu sedikit hijau
+                          className={`group p-6 border rounded-2xl shadow-card hover:shadow-card-hover cursor-pointer transition-all hover:-translate-y-1 flex flex-col h-full ${
+                            progressStatus === "KHATAM"
+                              ? "border-accent/30 bg-accent/5"
+                              : "bg-surface border-soft"
+                          }`}
                         >
                           <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 bg-brand-50 text-brand-700 text-lg font-black flex items-center justify-center rounded-full shadow-inner border border-brand-100 group-hover:scale-105 transition-transform flex-shrink-0">
+                            {/* 🔥 STYLE KHATAM: Bikin avatar full hijau */}
+                            <div
+                              className={`w-14 h-14 text-lg font-black flex items-center justify-center rounded-full shadow-inner border group-hover:scale-105 transition-transform flex-shrink-0 ${
+                                progressStatus === "KHATAM"
+                                  ? "bg-accent text-surface border-accent shadow-[0_0_15px_rgba(45,212,160,0.4)]"
+                                  : "bg-brand-50 text-brand-700 border-brand-100"
+                              }`}
+                            >
                               {getInitials(mhs.nama)}
                             </div>
                             <div className="overflow-hidden">
@@ -267,13 +260,31 @@ export default function Setoran() {
                               </span>
                             </div>
 
+                            {/* 🔥 BADGE KHATAM: Tambah icon SVG centang */}
                             <span
-                              className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border ${
-                                progressStatus === "AKTIF"
-                                  ? "bg-brand-50 text-brand-600 border-brand-100"
-                                  : "bg-status-cancelBg text-error border-status-cancelBorder"
+                              className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border flex items-center gap-1 ${
+                                progressStatus === "KHATAM"
+                                  ? "bg-accent/10 text-accent border-accent/30"
+                                  : progressStatus === "AKTIF"
+                                    ? "bg-brand-50 text-brand-600 border-brand-100"
+                                    : "bg-status-cancelBg text-error border-status-cancelBorder"
                               }`}
                             >
+                              {progressStatus === "KHATAM" && (
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    d="M5 13l4 4L19 7"
+                                  ></path>
+                                </svg>
+                              )}
                               {progressStatus}
                             </span>
                           </div>

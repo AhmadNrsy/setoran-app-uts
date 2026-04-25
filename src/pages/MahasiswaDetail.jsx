@@ -176,23 +176,96 @@ export default function MahasiswaDetail() {
     <div className="p-8 space-y-8 animate-fade-in-up">
       <button
         onClick={() => navigate(-1)}
-        className="text-primary hover:text-accent font-black tracking-tight"
+        className="text-primary hover:text-accent font-black tracking-tight transition-colors"
       >
         ← KEMBALI
       </button>
 
-      {/* STUDENT INFO */}
-      <div className="bg-surface p-6 border border-soft rounded-2xl shadow-card flex items-center gap-5">
-        <div className="w-16 h-16 bg-brand-100 text-brand-700 text-xl font-bold flex items-center justify-center rounded-full border-2 border-surface shadow-inner">
-          {getInitials(info.nama)}
+      {/* 💳 STUDENT INFO CARD (PREMIUM UPGRADE) */}
+      <div className="bg-surface p-6 md:p-8 border border-soft rounded-2xl shadow-card flex flex-col xl:flex-row gap-6 xl:items-center justify-between relative overflow-hidden group">
+        {/* Accent Line Kiri */}
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-accent group-hover:w-2 transition-all"></div>
+
+        {/* 🟢 BAGIAN KIRI: Avatar & Basic Info */}
+        <div className="flex items-center gap-5 z-10 pl-2">
+          <div className="w-16 h-16 bg-brand-50 text-brand-700 text-xl font-black flex items-center justify-center rounded-2xl border border-brand-100 shadow-inner flex-shrink-0">
+            {getInitials(info.nama)}
+          </div>
+          <div>
+            <h2
+              className="text-2xl font-black text-secondary leading-tight truncate max-w-[250px] md:max-w-md"
+              title={info.nama}
+            >
+              {info.nama}
+            </h2>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className="text-[10px] bg-background border border-soft px-2.5 py-1 rounded-md font-black text-muted uppercase tracking-widest shadow-sm">
+                NIM: {info.nim}
+              </span>
+              <span className="text-[10px] bg-background border border-soft px-2.5 py-1 rounded-md font-black text-muted uppercase tracking-widest shadow-sm">
+                SMT {info.semester}
+              </span>
+            </div>
+          </div>
         </div>
-        <div>
-          <h2 className="text-2xl font-black text-secondary leading-tight">
-            {info.nama}
-          </h2>
-          <p className="text-muted font-bold text-xs uppercase tracking-widest">
-            NIM: {info.nim} • SEMESTER {info.semester}
-          </p>
+
+        {/* 🟢 BAGIAN KANAN: Detail Info & Progress Bar */}
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 border-t xl:border-t-0 xl:border-l border-soft pt-5 xl:pt-0 xl:pl-10 z-10 w-full xl:w-auto">
+          {/* Kolom 1: Email & Dosen PA */}
+          <div className="space-y-4 flex-1 xl:flex-none justify-center flex flex-col">
+            <div>
+              <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">
+                Email Mahasiswa
+              </p>
+              <p className="text-xs font-bold text-secondary">
+                {info.email || `${info.nim}@students.uin-suska.ac.id`}
+              </p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">
+                Dosen PA
+              </p>
+              <p className="text-xs font-bold text-secondary">
+                {/* 🔥 UDAH DI-FIX: Ngambil nama dari info.dosen_pa.nama atau hardcode Pak Fikry */}
+                {info.dosen_pa?.nama || "Muhammad Fikry, S.T., M.Sc."}
+              </p>
+            </div>
+          </div>
+
+          {/* Kolom 2: Progress Indicator (Persentase) */}
+          <div className="flex flex-col justify-center min-w-[180px]">
+            <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-2">
+              Progres Hafalan
+            </p>
+            <div className="bg-brand-50/50 border border-brand-100 rounded-xl p-3.5 flex flex-col gap-2.5 shadow-sm">
+              <div className="flex justify-between items-end">
+                <span className="text-sm font-black text-brand-700">
+                  {surahSudahSetor.length}
+                  <span className="text-xs text-brand-700/60 font-bold">
+                    {" "}
+                    / {(data.setoran?.detail ?? []).length} Surah
+                  </span>
+                </span>
+                <span className="text-xs font-black text-accent">
+                  {(
+                    (surahSudahSetor.length /
+                      ((data.setoran?.detail ?? []).length || 1)) *
+                    100
+                  ).toFixed(1)}
+                  %
+                </span>
+              </div>
+              {/* Progress Bar Animasi */}
+              <div className="w-full bg-brand-200/40 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-accent h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(45,212,160,0.5)]"
+                  style={{
+                    width: `${(surahSudahSetor.length / ((data.setoran?.detail ?? []).length || 1)) * 100}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -202,7 +275,7 @@ export default function MahasiswaDetail() {
           Validasi Baru
         </h3>
         <div className="flex flex-col md:flex-row gap-3">
-          {/* 🔥 CUSTOM DROPDOWN (UDAH DI-FIX LABEL-NYA) */}
+          {/* 🔥 CUSTOM DROPDOWN */}
           <div className="relative flex-1">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -368,7 +441,7 @@ export default function MahasiswaDetail() {
                   </span>
                 </div>
 
-                {/* Detail Log (UDAH DI-FIX: Balikin IP, Waktu, dan Dosen) */}
+                {/* Detail Log */}
                 <div className="flex-1 pb-4">
                   <div className="flex items-center justify-between gap-4">
                     <p
@@ -380,7 +453,6 @@ export default function MahasiswaDetail() {
                     >
                       {log.aksi}
                     </p>
-                    {/* WAKTU / TIMESTAMP */}
                     <span className="text-[10px] text-muted font-bold">
                       {new Date(log.timestamp).toLocaleString("id-ID", {
                         dateStyle: "medium",
