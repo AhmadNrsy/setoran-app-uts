@@ -43,17 +43,15 @@ export default function Topbar() {
       color: "#0D2B22",
     }).then((result) => {
       if (result.isConfirmed) {
-        // 🗑️ Clear token dari browser
         localStorage.removeItem("token");
-
-        // 🚀 Redirect ke halaman login
-        navigate("/");
 
         Swal.fire({
           icon: "success",
           title: "Berhasil Keluar",
           showConfirmButton: false,
           timer: 1000,
+        }).then(() => {
+          window.location.href = "/login";
         });
       }
     });
@@ -118,9 +116,20 @@ export default function Topbar() {
             <p className="text-sm font-black text-secondary leading-tight">
               {namaDosen}
             </p>
-            <p className="text-[9px] font-bold text-muted uppercase tracking-widest mt-0.5">
-              Dosen Pembimbing
-            </p>
+            {/* ✨ ROLE & NIP DINAMIS ✨ */}
+            <div className="flex items-center justify-end gap-1.5 mt-0.5">
+              <p className="text-[9px] font-bold text-muted uppercase tracking-widest">
+                Dosen Pembimbing
+              </p>
+              {dosen?.nip && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-soft"></span>
+                  <p className="text-[9px] font-black text-brand-600 tracking-widest">
+                    NIP: {dosen.nip}
+                  </p>
+                </>
+              )}
+            </div>
           </div>
           {/* 📛 INISIAL DINAMIS */}
           <div className="w-10 h-10 bg-brand-100 text-brand-700 font-black text-sm flex items-center justify-center rounded-xl border border-brand-200 shadow-sm cursor-pointer hover:scale-105 transition-transform">
