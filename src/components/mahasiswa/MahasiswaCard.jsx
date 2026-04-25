@@ -16,16 +16,13 @@ const AVATAR_PALETTE = [
 export default function MahasiswaCard({ mahasiswa }) {
   const navigate = useNavigate();
 
-  // 🔹 SAFE destructuring (biar gak undefined)
   const { nama = "", nim = "", angkatan, info_setoran = {} } = mahasiswa || {};
 
-  // 🔹 Ambil data setoran (fallback 0)
   const progres = info_setoran?.persentase_progres_setor ?? 0;
   const sudahSetor = info_setoran?.total_sudah_setor ?? 0;
   const totalWajib = info_setoran?.total_wajib_setor ?? 0;
   const terakhir = info_setoran?.terakhir_setor ?? null;
 
-  // 🔹 Avatar initials (SAFE)
   const initials = (nama || "")
     .split(" ")
     .slice(0, 2)
@@ -33,11 +30,9 @@ export default function MahasiswaCard({ mahasiswa }) {
     .join("")
     .toUpperCase();
 
-  // 🔹 Warna avatar berdasarkan nim (SAFE)
   const lastDigit = parseInt((nim || "0").slice(-1)) || 0;
   const pal = AVATAR_PALETTE[lastDigit % AVATAR_PALETTE.length];
 
-  // 🔹 Warna progress
   const progressColor =
     progres >= 80
       ? "bg-emerald-400"

@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />; // Penting yah, jangan lupa Outlet untuk render child route
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

@@ -1,4 +1,3 @@
-// src/components/setoran/SetoranItem.jsx
 import { deleteSetoran } from "../../services/setoranService";
 
 const SetoranItem = ({ item, onRefresh }) => {

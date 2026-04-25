@@ -37,14 +37,12 @@ export default function MahasiswaDetail() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Form states
   const [selectedSurahId, setSelectedSurahId] = useState("");
   const [tanggal, setTanggal] = useState(
     new Date().toISOString().split("T")[0],
   );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // 🔥 PAGINATION STATES (8 Data Per Page)
   const ITEMS_PER_PAGE = 8;
   const [pageSetoran, setPageSetoran] = useState(1);
   const [pageLogs, setPageLogs] = useState(1);
@@ -73,8 +71,8 @@ export default function MahasiswaDetail() {
     if (!selectedSurahId || !tanggal) {
       Swal.fire({
         icon: "warning",
-        title: "Hold up!",
-        text: "Lengkapi surah dan tanggal dulu bro.",
+        title: "Tahan!",
+        text: "Lengkapi surah dan tanggal dahulu.",
         confirmButtonColor: "#2DD4A0",
       });
       return;
@@ -97,7 +95,7 @@ export default function MahasiswaDetail() {
         icon: "success",
         title: "Validated!",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       });
       setSelectedSurahId("");
       fetchData();

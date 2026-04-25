@@ -12,11 +12,9 @@ export default function MahasiswaGroup({ angkatan, mahasiswaList }) {
     0,
   );
 
-  // 🔹 Average progress
   const avgProgres =
     totalWajib > 0 ? Math.round((totalSudah / totalWajib) * 100) : 0;
 
-  // 🔹 Warna progress (optional UI)
   const progressColor =
     avgProgres >= 80
       ? "bg-emerald-400"

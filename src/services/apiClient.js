@@ -1,7 +1,6 @@
 import axios from "axios";
 import { getToken } from "./authService";
 
-// 🔥 base API
 const apiClient = axios.create({
   baseURL: "https://api.tif.uin-suska.ac.id/setoran-dev/v1",
 });
@@ -20,7 +19,6 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ❗ OPTIONAL: auto logout kalau token expired
 apiClient.interceptors.response.use(
   (res) => res,
   (err) => {
