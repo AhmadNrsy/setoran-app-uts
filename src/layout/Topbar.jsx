@@ -1,5 +1,7 @@
 // src/components/Topbar.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { getPaSaya } from "../services/setoranService";
 
 // Helper buat ngambil inisial (misal: "Muhammad Fikry" -> "MF")
@@ -14,6 +16,7 @@ function getInitials(name = "") {
 
 export default function Topbar() {
   const [dosen, setDosen] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDosen = async () => {
@@ -26,6 +29,35 @@ export default function Topbar() {
     };
     fetchDosen();
   }, []);
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Yakin mau keluar?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#E53E3E",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: "Ya, Keluar!",
+      cancelButtonText: "Batal",
+      background: "#FFFFFF",
+      color: "#0D2B22",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 🗑️ Clear token dari browser
+        localStorage.removeItem("token");
+
+        // 🚀 Redirect ke halaman login
+        navigate("/");
+
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil Keluar",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      }
+    });
+  };
 
   const namaDosen = dosen?.nama || "Dosen PA";
   const inisial = dosen?.nama ? getInitials(dosen.nama) : "PA";
@@ -82,7 +114,7 @@ export default function Topbar() {
         {/* Profile Info */}
         <div className="flex items-center gap-4 border-l border-soft pl-6">
           <div className="text-right hidden sm:block">
-            {/* 🔥 NAMA DOSEN DINAMIS */}
+            {/* 📛 NAMA DOSEN DINAMIS */}
             <p className="text-sm font-black text-secondary leading-tight">
               {namaDosen}
             </p>
@@ -90,13 +122,17 @@ export default function Topbar() {
               Dosen Pembimbing
             </p>
           </div>
-          {/* 🔥 INISIAL DINAMIS */}
+          {/* 📛 INISIAL DINAMIS */}
           <div className="w-10 h-10 bg-brand-100 text-brand-700 font-black text-sm flex items-center justify-center rounded-xl border border-brand-200 shadow-sm cursor-pointer hover:scale-105 transition-transform">
             {inisial}
           </div>
 
           {/* Logout Button */}
-          <button className="p-2 text-muted hover:text-error hover:bg-status-cancelBg rounded-xl transition-all ml-2">
+          <button
+            onClick={handleLogout}
+            className="p-2 text-muted hover:text-error hover:bg-status-cancelBg rounded-xl transition-all ml-2"
+            title="Keluar"
+          >
             <svg
               className="w-5 h-5"
               fill="none"

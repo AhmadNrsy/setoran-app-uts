@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { motion } from "framer-motion"; // 👈 Import Motion di sini!
+import { motion } from "framer-motion";
 import { getPaSaya } from "../services/setoranService";
 
 // ==========================================
@@ -13,7 +13,7 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15, // Efek muncul bergantian tiap 0.15 detik
+      staggerChildren: 0.15,
       ease: "easeOut",
     },
   },
@@ -72,7 +72,6 @@ export default function Dashboard() {
       </div>
     );
 
-  // 💥 Perhatikan tag <motion.div> di bawah ini!
   return (
     <motion.div
       variants={containerVariants}
@@ -89,13 +88,37 @@ export default function Dashboard() {
           <h1 className="text-3xl font-black text-secondary tracking-tight">
             Dashboard
           </h1>
-          <p className="text-muted font-medium mt-1">
-            Welcome back,{" "}
-            <span className="text-secondary font-bold">
-              {dosenData?.nama || "Dosen PA"}
-            </span>{" "}
-            👋
-          </p>
+          <div className="flex items-center flex-wrap gap-2 mt-1">
+            <p className="text-muted font-medium">
+              Welcome back,{" "}
+              <span className="text-secondary font-bold">
+                {dosenData?.nama || "Dosen PA"}
+              </span>{" "}
+              👋
+            </p>
+
+            {/* ✨ BADGE NIP ESTETIK ✨ */}
+            {dosenData?.nip && (
+              <span className="flex items-center gap-1.5 px-2 py-0.5 bg-brand-50 border border-brand-100 rounded-md">
+                <svg
+                  className="w-3 h-3 text-brand-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
+                  ></path>
+                </svg>
+                <span className="text-[10px] font-black text-brand-700 tracking-widest uppercase mt-px">
+                  NIP. {dosenData.nip}
+                </span>
+              </span>
+            )}
+          </div>
         </div>
         <button
           onClick={handleExportReport}
@@ -193,7 +216,7 @@ export default function Dashboard() {
         {/* 🌟 WATERMARK / SIGNATURE FOOTER */}
         <motion.div
           variants={itemVariants}
-          className="pt-10 pb-4 flex justify-center w-full"
+          className="pt-10 pb-4 flex justify-center w-full lg:col-span-3"
         >
           <p className="text-[9px] font-black text-muted/60 uppercase tracking-[0.3em] flex items-center gap-2">
             <span>Engineered for Teknik Informatika</span>

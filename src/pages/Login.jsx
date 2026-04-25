@@ -16,7 +16,6 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-
       const params = new URLSearchParams();
       params.append("client_id", import.meta.env.VITE_CLIENT_ID);
       params.append("client_secret", import.meta.env.VITE_CLIENT_SECRET);
@@ -42,7 +41,7 @@ export default function Login() {
         Swal.fire({
           icon: "success",
           title: "Login Berhasil",
-          text: "Autentikasi SSO sukses!",
+          text: "Autentikasi Berhasil!",
           confirmButtonColor: "#2DD4A0",
           background: "#FFFFFF",
           color: "#0D2B22",
@@ -57,7 +56,7 @@ export default function Login() {
       Swal.fire({
         icon: "error",
         title: "Autentikasi Gagal",
-        text: "Kredensial SSO tidak valid atau tidak terdaftar di sistem.",
+        text: "Pastikan Email sudah Terdaftar.",
         confirmButtonColor: "#E53E3E",
         background: "#FFFFFF",
         color: "#0D2B22",
@@ -106,13 +105,13 @@ export default function Login() {
           <div className="space-y-1.5">
             {/* Ubah label jadi Username karena Keycloak pakenya username */}
             <label className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">
-              Username / NIP
+              Username / Email
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Masukkan username SSO"
+              placeholder="Masukkan username atau email"
               className="w-full bg-slate-50 border border-slate-200 text-secondary text-sm font-bold px-5 py-3.5 rounded-xl focus:ring-2 focus:ring-accent outline-none transition-all placeholder:text-muted/60"
               required
             />
