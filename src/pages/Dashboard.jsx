@@ -86,7 +86,7 @@ export default function Dashboard() {
       >
         <div>
           <h1 className="text-3xl font-black text-secondary tracking-tight">
-            Dashboard
+            Beranda
           </h1>
           <div className="flex items-center flex-wrap gap-2 mt-1">
             <p className="text-muted font-medium">
